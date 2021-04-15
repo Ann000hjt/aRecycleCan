@@ -3,9 +3,7 @@
 #include<conio.h>
 #include<iostream>
 
-#include"Column.h"
-#include"Bird.h"
-
+#include"Object.h"
 
 const int BEFORE_START = 0;
 const int BEFORE_INIT = 1;
@@ -18,9 +16,8 @@ const int radius = 10;
 int windowsLenth = GetSystemMetrics(SM_CXSCREEN);            /* 屏幕宽度 像素 */
 int windowsWidth = GetSystemMetrics(SM_CYSCREEN);            /* 屏幕高度 像素 */
 
-Bird bird;
+Can hh;
 const int Num = 4;
-Column cArr[4];
 
 static int flag = 0;
 
@@ -119,7 +116,7 @@ int main()
                 {
                     //SetConsoleCursorPosition(hOut, pos);//把光标移动到pos位置
                     //std::cout << "x: " << p.x << "y: " << p.y << std::endl;
-                    if (p.x > 600 && p.x < 867 && p.y >344 && p.y < 411)
+                    if (p.x > (windowsLenth / 2) - 160&& p.x < (windowsLenth / 2) + 160 && p.y > (3 * windowsWidth / 5) - 90 && p.y < (3 * windowsWidth / 5) + 90)
                     {
                         system("cls");
                         //KillTimer(NULL, MyIDMenu);
@@ -145,13 +142,7 @@ int main()
         case 2:
         {
             //system("cls");
-            bird.drawBird();
-            bird.moveBird();
-            for (int i = 0; i < Num; i++)
-            {
-                cArr[i].moveColumn();
-                cArr[i].changeColumn();
-            }
+            hh.draw();
             Sleep(50);
             break;
         }
@@ -200,24 +191,5 @@ void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT idEvent, DWORD dwTime)
 {
     HANDLE	hOut = GetStdHandle(STD_OUTPUT_HANDLE);//获得标准输入设备句柄
 //WM_TIMER
-    if (flag == BEFORE_START)
-    {
-        showMenu(hOut);
-    }
-    //else
-    //{
-    //    bird.drawBird();
-    //    bird.moveBird();
-    //    for (int i = 0; i < Num; i++)
-    //    {
-    //        cArr[i].moveColumn();
-    //        cArr[i].changeColumn();
-    //    }
-    //    /* for (int i = 0; i < Num; i++)
-    //     {
-    //         cArr[i].drawColumn();
-    //     }*/
-
-    //}
 
 }

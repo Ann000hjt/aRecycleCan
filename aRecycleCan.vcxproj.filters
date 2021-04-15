@@ -18,30 +18,24 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Column.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Bird.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="upDateData.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="drawAll.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Column.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Bird.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
     <ClInclude Include="upDateData.h">
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="drawAll.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
       <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>

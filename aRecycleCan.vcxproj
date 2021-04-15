@@ -139,16 +139,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Bird.cpp" />
-    <ClCompile Include="Column.cpp" />
     <ClCompile Include="drawAll.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Object.cpp" />
     <ClCompile Include="upDateData.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Bird.h" />
-    <ClInclude Include="Column.h" />
     <ClInclude Include="drawAll.h" />
+    <ClInclude Include="Object.h" />
     <ClInclude Include="upDateData.h" />
   </ItemGroup>
   <ItemGroup>
