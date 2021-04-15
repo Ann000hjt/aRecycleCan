@@ -1,43 +1,61 @@
 #include"Object.h"
 
+
+const int vx = -8;//column speed
+const int gravity = 3;
+const int radius = 10;
+
 Can::Can()
 {
     level = LEVEL_0;
     v_y = 0;
     direction = 'D';
-    score = 0;
+}
+void Can::jump()
+{
+
+    direction = 'W';
+    v_y = vAfterJump;
+
 }
 void Can::move()
 {
-    //move将在一个循环函数里面
-    char c = _getch();
-    switch (c)
+    if (direction == 'W')
     {
-    case 13://回车键
-        cout << "wait..." << endl;
-        system("pause");
-        //暂用这个 功能是暂停游戏 flag=
-        break;
-    case 80://向下
-        direction = 'S';
-        break;
-    case 72://向上
-        if (direction != 'W')v_y = 1;//速度先假设是1，如果方向已经是向上就是无效操作
-        direction = 'W';
-        break;
-    case 75://向左
-        direction = 'A';
-        v_x = -1;//计算位移的时候利用物理公式
-        this->x--;
-        break;
-    case 77://向右
-        direction = 'D';
-        v_x = 1;
-        this->x += 1;//通过设置这里每一次加的值来实现速度的快慢
-        break;
-    default:
-        break;
+        y = y + v_y;
+        v_y = v_y + gravity;
     }
+
+
+//    //move将在一个循环函数里面
+//    char c = _getch();
+//    switch (c)
+//    {
+//    case 13://回车键
+//        cout << "wait..." << endl;
+//        system("pause");
+//        //暂用这个 功能是暂停游戏 flag=
+//        break;
+//    case 80://向下
+//        direction = 'S';
+//        break;
+//    case 72://向上
+//        if (direction != 'W')v_y = 1;//速度先假设是1，如果方向已经是向上就是无效操作
+//        direction = 'W';
+//        break;
+//    case 75://向左
+//        direction = 'A';
+//        v_x = -1;//计算位移的时候利用物理公式
+//        this->x--;
+//        break;
+//    case 77://向右
+//        direction = 'D';
+//        v_x = 1;
+//        this->x += 1;//通过设置这里每一次加的值来实现速度的快慢
+//        break;
+//    default:
+//        break;
+//    }
 }
 void Can::draw()
 {
@@ -60,8 +78,19 @@ void Can::draw()
 
     SelectObject(cmdmem, hBitmap);
 
-    int buttonStartWidth = 1900;
-    int buttonStartHeight = 900;
+    int buttonStartWidth = 320;
+    int buttonStartHeight = 180;
 
-    BitBlt(dc, this->x, this->y, buttonStartWidth, buttonStartHeight, cmdmem, 0, 0, SRCCOPY);
+    BitBlt(dc,x ,y, buttonStartWidth, buttonStartHeight, cmdmem, 0, 0, SRCCOPY);
+}
+
+void Can::changeState()
+{
+    //如果方向为W，并且是在下落过程，并且落到地面了，则方向更改为D
+    if (direction == 'W' && v_y > 0 && y == 4 * windowsWidth / 5)
+    {
+        this->direction = 'D';
+    }
+
+
 }

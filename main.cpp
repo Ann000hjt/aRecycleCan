@@ -49,7 +49,7 @@ int main()
 
     HANDLE	hOut = GetStdHandle(STD_OUTPUT_HANDLE);//获得标准输入设备句柄
     HANDLE	hIn = GetStdHandle(STD_INPUT_HANDLE);//获得标准输出设备句柄
-    INPUT_RECORD mouserec;       //定义输入事件结构体  
+    INPUT_RECORD inputRecord;       //定义输入事件结构体  
 
     DWORD mode;
     GetConsoleMode(hIn, &mode);
@@ -82,7 +82,7 @@ int main()
     DWORD res;       //用于存储读取记录  
     COORD pos;       //用于存储鼠标当前位置  
 
-
+    DWORD write = 1;//在writeConsoleInput里使用
 
     MSG msg;
     UINT_PTR MyIDMenu = SetTimer(NULL, 1, 1, &TimerProc);
@@ -92,22 +92,31 @@ int main()
 
     POINT p;//鼠标坐标
     showMenu(hOut);
-    ReadConsoleInput(hIn, &mouserec, 1, &res);       //读取输入事件
+    ReadConsoleInput(hIn, &inputRecord, 1, &res);       //读取输入事件
+
+
+
+
+
     for (;;)
     {
+        //PeekConsoleInput(hIn, &inputRecord, 1000, &res);
+
+       // FlushConsoleInputBuffer(hIn);
         GetNumberOfConsoleInputEvents(hIn, InputNum);
         if (*InputNum >= judge)
         {
-            ReadConsoleInput(hIn, &mouserec, 1, &res);       //读取输入事件
+            ReadConsoleInput(hIn, &inputRecord, 1, &res);       //读取输入事件
         }
-        pos = mouserec.Event.MouseEvent.dwMousePosition;     //获得当前鼠标位置  
+        
+        pos = inputRecord.Event.MouseEvent.dwMousePosition;     //获得当前鼠标位置  
         GetCursorPos(&p);
 
         
 
-        if (mouserec.EventType == MOUSE_EVENT)     //如果当前为鼠标事件  
+        if (inputRecord.EventType == MOUSE_EVENT)     //如果当前为鼠标事件  
         {
-            if (mouserec.Event.MouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+            if (inputRecord.Event.MouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED)
             {
                 //std::cout << p.x << std::endl << p.y << std::endl;
                 switch (flag)
@@ -129,6 +138,18 @@ int main()
                 }
             }
         }
+        //如果当前事件是键盘事件
+        else if (inputRecord.EventType == KEY_EVENT)
+        {
+            if (inputRecord.Event.KeyEvent.wVirtualKeyCode == 0x57 && inputRecord.Event.KeyEvent.bKeyDown  && hh.direction != 'W')
+            {
+                //用户按下了W
+                hh.jump();
+                inputRecord.Event.KeyEvent.wVirtualKeyCode = '0';//为了知道此时没有按W，我把他设置成现在在按0
+               
+            }
+            
+        }
         switch (flag)
         {
         case 0:
@@ -141,11 +162,13 @@ int main()
         }
         case 2:
         {
-            //system("cls");
+            system("cls");
+            hh.move();
             hh.draw();
-            Sleep(50);
+            hh.changeState();
             break;
         }
+
         }
         PeekMessage(&msg, NULL, 0, 0,PM_NOREMOVE);
             if(msg.message == WM_TIMER)
@@ -153,9 +176,9 @@ int main()
                 TranslateMessage(&msg);
                 DispatchMessage(&msg);
             }
-        
-    }
 
+
+    }
     CloseHandle(hOut);
     CloseHandle(hIn);
 
@@ -191,5 +214,15 @@ void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT idEvent, DWORD dwTime)
 {
     HANDLE	hOut = GetStdHandle(STD_OUTPUT_HANDLE);//获得标准输入设备句柄
 //WM_TIMER
+    if (flag == BEFORE_START)
+    {
+        showMenu(hOut);
+    }
+    else
+    {
+
+        hh.draw();
+    }
+
 
 }
