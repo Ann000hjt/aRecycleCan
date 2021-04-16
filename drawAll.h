@@ -1,10 +1,18 @@
+
+
 #pragma once
-#include"Bird.h"
-#include"Column.h"
+#ifndef DRAWALL_H
+#define DRAWALL_H
+
+class Object;
+using namespace std;
 
 
-void drawAll(Bird bird,Column cArr[])
-{
-	bird.drawBird();
-	drawColumn(cArr, 4);
-}
+HDC DrawBmp(HDC hDC, HBITMAP hBitmap, Object& object, int bmpLenth, int bmpWidth);
+//void drawAll()
+//{
+//}
+
+
+#endif // !DRAWALL_H
+

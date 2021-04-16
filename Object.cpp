@@ -60,28 +60,35 @@ void Can::move()
 void Can::draw()
 {
     //can是一个位图
-    HMODULE hKernel32 = GetModuleHandle("kernel32");
-    HWND cmd = GetConsoleWindow();//控制台窗口句柄
+    //HMODULE hKernel32 = GetModuleHandle("kernel32");
+    //HWND cmd = GetConsoleWindow();//控制台窗口句柄
 
-    HDC dc = GetDC(cmd);
-    HBITMAP hBitmap;
-    HDC cmdmem = CreateCompatibleDC(dc);
-    //if (this->direction == 'A')
-    //{
-    //    hBitmap = (HBITMAP)LoadImage(NULL, "left.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
-    //}
-    //else
-    //{
-    //    hBitmap = (HBITMAP)LoadImage(NULL, "right.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
-    //}
-    hBitmap = (HBITMAP)LoadImage(NULL, "continue320180.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
+    //HDC dc = GetDC(cmd);
 
-    SelectObject(cmdmem, hBitmap);
 
-    int buttonStartWidth = 320;
-    int buttonStartHeight = 180;
 
-    BitBlt(dc,x ,y, buttonStartWidth, buttonStartHeight, cmdmem, 0, 0, SRCCOPY);
+
+    //HBITMAP hBitmap;
+    ////HDC cmdmem = CreateCompatibleDC(dc);
+    //// 
+    //HDC hdcMEM;
+    //hdcMEM = CreateCompatibleDC(hDCtemp);
+    ////if (this->direction == 'A')
+    ////{
+    ////    hBitmap = (HBITMAP)LoadImage(NULL, "left.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
+    ////}
+    ////else
+    ////{
+    ////    hBitmap = (HBITMAP)LoadImage(NULL, "right.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
+    ////}
+    //hBitmap = (HBITMAP)LoadImage(NULL, "continue320180.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
+
+    //SelectObject(hdcMEM, hBitmap);
+
+    //int buttonStartWidth = 320;
+    //int buttonStartHeight = 180;
+
+    //BitBlt(dc,x ,y, buttonStartWidth, buttonStartHeight, cmdmem, 0, 0, SRCCOPY);
 }
 
 void Can::changeState()

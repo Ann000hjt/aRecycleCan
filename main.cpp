@@ -4,6 +4,9 @@
 #include<iostream>
 
 #include"Object.h"
+#include"drawAll.h"
+
+using namespace std;
 
 const int BEFORE_START = 0;
 const int BEFORE_INIT = 1;
@@ -21,6 +24,8 @@ const int Num = 4;
 
 static int flag = 0;
 
+
+
 SMALL_RECT SizeOfWindow(HANDLE hConsoleOutput)
 {
     CONSOLE_SCREEN_BUFFER_INFO info;
@@ -29,36 +34,33 @@ SMALL_RECT SizeOfWindow(HANDLE hConsoleOutput)
 }
 void showMenu(HANDLE screen);
 void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT idEvent, DWORD dwTime);
-HDC DrawBmp(HDC hDCtemp, HBITMAP hBitmap,int LTX, int LTY,int RBX, int RBY)
-{
-    HDC hdcMEM; 
-    hdcMEM = CreateCompatibleDC(hDCtemp);
-
-    SelectObject(hdcMEM, hBitmap);//注意此处，将要画的位图选入hdcImage
-
-    StretchBlt(hdcMEM, LTX, LTY, RBX, RBY, hdcMEM, LTX, LTY, RBX, RBY, SRCCOPY); //这里才能正常画图，将hdcImage中的位图直接复制到内存缓冲区
-    StretchBlt(hDCtemp, LTX, LTY, RBX, RBY, hdcMEM, LTX, LTY, RBX, RBY, SRCCOPY); //再将内存缓冲区中的数据绘制到屏幕上.
-
-    DeleteObject(hdcMEM);
-    return hDCtemp;
-
-}
 int main()
 {
     CONSOLE_SCREEN_BUFFER_INFO csbi;         //定义窗口缓冲区信息结构体  
 
-    HANDLE	hOut = GetStdHandle(STD_OUTPUT_HANDLE);//获得标准输入设备句柄
-    HANDLE	hIn = GetStdHandle(STD_INPUT_HANDLE);//获得标准输出设备句柄
+    HBITMAP continue320180 = (HBITMAP)LoadImage(NULL, "continue320180.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
+
+    HANDLE	hOut = GetStdHandle(STD_OUTPUT_HANDLE);//获得标准输出设备句柄
+    HANDLE	hIn = GetStdHandle(STD_INPUT_HANDLE);//获得标准输入设备句柄
     INPUT_RECORD inputRecord;       //定义输入事件结构体  
 
     DWORD mode;
     GetConsoleMode(hIn, &mode);
     mode &= ~ENABLE_QUICK_EDIT_MODE;  //移除快速编辑模式
     mode &= ~ENABLE_INSERT_MODE;      //移除插入模式
-    //mode &= ~ENABLE_MOUSE_INPUT;??
+    mode &= ~ENABLE_MOUSE_INPUT;//？
     SetConsoleMode(hIn, mode);
 
-    HWND hwnd = GetForegroundWindow();
+
+
+
+    HWND hwnd = GetForegroundWindow();//得到前台窗口（用户当前工作的窗口）句柄
+
+    //HMODULE hKernel32 = GetModuleHandle("kernel32");
+    //GetConsoleWindow = (PROCGETCONSOLEWINDOW)GetProcAddress(hKernel32, "GetConsoleWindow");
+    
+    //HWND cmd = (PROCGETCONSOLEWINDOW)GetProcAddress(hKernel32, "GetConsoleWindow");
+    
 
     int windowsLenth = GetSystemMetrics(SM_CXSCREEN);            /* 屏幕宽度 像素 */
     int windowsWidth = GetSystemMetrics(SM_CYSCREEN);            /* 屏幕高度 像素 */
@@ -91,15 +93,25 @@ int main()
     LPDWORD InputNum = &InNum;
 
     POINT p;//鼠标坐标
-    showMenu(hOut);
+    //showMenu(hOut);
+    Can buttonContinue;/*
+    buttonContinue.setX(windowsLenth / 2);
+
+    buttonContinue.setY(3 * windowsWidth / 5);*/
+
+
+HWND cmd = GetConsoleWindow();//控制台窗口句柄
+    //得到设备场景（设备描述表）句柄：窗口DC
+    HDC hDC = GetDC(cmd);//屏幕显示DC
+    //依据屏幕显示DC创建内存DC设备描述表句柄
+    HDC dcMEM = CreateCompatibleDC(hDC);//内存兼容DC
+
+        
+    
     ReadConsoleInput(hIn, &inputRecord, 1, &res);       //读取输入事件
-
-
-
-
-
+    //BitBlt(hDC, 0, 0,windowsLenth , windowsWidth, dctemp, 0, 0, SRCCOPY); //此处第一个参数才为hDC,即窗口句柄
     for (;;)
-    {
+    {   
         //PeekConsoleInput(hIn, &inputRecord, 1000, &res);
 
        // FlushConsoleInputBuffer(hIn);
@@ -153,6 +165,8 @@ int main()
         switch (flag)
         {
         case 0:
+            dcMEM = DrawBmp(dcMEM, continue320180, buttonContinue, 320, 180);
+            BitBlt(hDC, 0, 0, windowsLenth, windowsWidth, dcMEM, 0, 0, SRCCOPY); //此处第一个参数才为hDC,即窗口句柄
             break;
         case 1:
         {
@@ -164,7 +178,7 @@ int main()
         {
             system("cls");
             hh.move();
-            hh.draw();
+            //hh.draw();
             hh.changeState();
             break;
         }
@@ -178,6 +192,8 @@ int main()
             }
 
 
+
+            
     }
     CloseHandle(hOut);
     CloseHandle(hIn);
@@ -188,8 +204,7 @@ int main()
 void showMenu(HANDLE screen)
 {
 
-    int cx = GetSystemMetrics(SM_CXSCREEN);            /* 屏幕宽度 像素 */
-    int cy = GetSystemMetrics(SM_CYSCREEN);            /* 屏幕高度 像素 */
+    
 
     HMODULE hKernel32 = GetModuleHandle("kernel32");
     HWND cmd = GetConsoleWindow();//控制台窗口句柄
@@ -206,22 +221,34 @@ void showMenu(HANDLE screen)
     int buttonStartWidth = 320;
     int buttonStartHeight = 180;
 
-    BitBlt(dc, (cx / 2), (3*cy / 5), buttonStartWidth, buttonStartHeight, cmdmem, 0, 0, SRCCOPY);
+    BitBlt(dc, (windowsLenth / 2), (3*windowsWidth / 5), buttonStartWidth, buttonStartHeight, cmdmem, 0, 0, SRCCOPY);
 
     return;
 }
 void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT idEvent, DWORD dwTime)
 {
+
+
+    HWND cmd = GetConsoleWindow();//控制台窗口句柄
+        //得到设备场景（设备描述表）句柄：窗口DC
+    HDC hDC = GetDC(cmd);//屏幕显示DC
+    //依据屏幕显示DC创建内存DC设备描述表句柄
+    HDC dcMEM = CreateCompatibleDC(hDC);//内存兼容DC
+
     HANDLE	hOut = GetStdHandle(STD_OUTPUT_HANDLE);//获得标准输入设备句柄
 //WM_TIMER
+    Can buttonContinue;
+    HBITMAP continue320180 = (HBITMAP)LoadImage(NULL, "continue320180.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
+    dcMEM = DrawBmp(dcMEM, continue320180, buttonContinue, 320, 180);
+        BitBlt(hDC, 0, 0, windowsLenth, windowsWidth, dcMEM, 0, 0, SRCCOPY); //此处第一个参数才为hDC,即窗口句柄
     if (flag == BEFORE_START)
     {
-        showMenu(hOut);
+        //showMenu(hOut);
     }
     else
     {
 
-        hh.draw();
+        //hh.draw();
     }
 
 
