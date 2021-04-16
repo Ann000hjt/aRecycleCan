@@ -21,6 +21,7 @@ const int Num = 4;
 
 static int flag = 0;
 
+//取消滚动条
 SMALL_RECT SizeOfWindow(HANDLE hConsoleOutput)
 {
     CONSOLE_SCREEN_BUFFER_INFO info;
@@ -28,7 +29,9 @@ SMALL_RECT SizeOfWindow(HANDLE hConsoleOutput)
     return info.srWindow;
 }
 void showMenu(HANDLE screen);
+//callback 
 void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT idEvent, DWORD dwTime);
+
 HDC DrawBmp(HDC hDCtemp, HBITMAP hBitmap,int LTX, int LTY,int RBX, int RBY)
 {
     HDC hdcMEM; 
