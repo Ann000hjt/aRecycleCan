@@ -21,7 +21,7 @@ class Object
 {
 
 public:
-    friend HDC DrawBmp(HDC hDC, HBITMAP hBitmap, Object& object,int bmpLenth,int bmpWidth);
+    friend HDC DrawBmp(HDC hDC, HDC dcMEM, HBITMAP hBitmap, Object& object,int bmpLenth,int bmpWidth);
     Object() {};
     virtual ~Object() {};
     virtual void move() = 0;
@@ -48,8 +48,16 @@ public:
 private:
     int level;
     int v_y;//y方向上的速度
-    const int vAfterJump = -15;
+    const int vAfterJump = -60;
 };
+//button类，各种按钮
+class Button : public Object
+{
+public:
+
+};
+
+
 //class Coin :public Object
 //{
 //public:
