@@ -1,10 +1,12 @@
 #pragma once
-#pragma once
 #include<iostream>
 #include<windows.h>
 #include<conio.h>
 #include <time.h>
 #include<string>
+
+#include"drawAll.h"
+
 using std::cout;
 using std::endl;
 #define LEVEL_0 0//铝片->重量压型器
@@ -13,18 +15,22 @@ using std::endl;
 #define LEVEL_3 3//不可回收品->可回收垃圾桶
 
 
-
-
 extern int windowsLenth;
 extern int windowsWidth;
 class Object
 {
+
 public:
+    friend HDC DrawBmp(HDC hDC, HDC dcMEM, HBITMAP hBitmap, Object& object,int bmpLenth,int bmpWidth);
     Object() {};
     virtual ~Object() {};
     virtual void move() = 0;
     virtual void draw() = 0;
     virtual void changeState() = 0;//状态改变检测，例如：如果起跳后落地了，把方向从W改成D
+    int getX() { return x; };
+    int getY() { return y; };
+    void setX(int newX) { x = newX; }
+    void setY(int newY) { y = newY; }
 protected:
     int x = windowsLenth/8;//中心的X坐标
     int y = 4 * windowsWidth / 5;
@@ -42,8 +48,16 @@ public:
 private:
     int level;
     int v_y;//y方向上的速度
-    const int vAfterJump = -15;
+    const int vAfterJump = -60;
 };
+//button类，各种按钮
+class Button : public Object
+{
+public:
+
+};
+
+
 //class Coin :public Object
 //{
 //public:

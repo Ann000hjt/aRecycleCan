@@ -4,134 +4,110 @@
 #include<iostream>
 
 #include"Object.h"
+#include"drawAll.h"
+
+using namespace std;
 
 const int BEFORE_START = 0;
 const int BEFORE_INIT = 1;
 const int PLAYING_GAME = 2;
 
-const int vx = -8;//column speed
-const int gravity = 3;
-const int radius = 10;
+const int vx = -8;//èƒŒæ™¯ç§»åŠ¨é€Ÿåº¦
+const int gravity = 3;//æ¨¡æ‹Ÿé‡åŠ›
 
-int windowsLenth = GetSystemMetrics(SM_CXSCREEN);            /* ÆÁÄ»¿í¶È ÏñËØ */
-int windowsWidth = GetSystemMetrics(SM_CYSCREEN);            /* ÆÁÄ»¸ß¶È ÏñËØ */
+int windowsLenth = GetSystemMetrics(SM_CXSCREEN);            /* å±å¹•å®½åº¦ åƒç´  */
+int windowsWidth = GetSystemMetrics(SM_CYSCREEN);            /* å±å¹•é«˜åº¦ åƒç´  */
 
-Can hh;
-const int Num = 4;
+Can hh;//åˆ›å»ºä¸»è§’æ˜“æ‹‰ç½
 
-static int flag = 0;
+static int flag = BEFORE_START;//è®¾ç½®æ¸¸æˆçŠ¶æ€ä¸ºï¼šè¿›å…¥æ¸¸æˆå‰
 
-//È¡Ïû¹ö¶¯Ìõ
+
+
+//å–æ¶ˆæ»šåŠ¨æ¡
 SMALL_RECT SizeOfWindow(HANDLE hConsoleOutput)
 {
     CONSOLE_SCREEN_BUFFER_INFO info;
     GetConsoleScreenBufferInfo(hConsoleOutput, &info);
     return info.srWindow;
 }
-void showMenu(HANDLE screen);
-//callback 
-void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT idEvent, DWORD dwTime);
-
-HDC DrawBmp(HDC hDCtemp, HBITMAP hBitmap,int LTX, int LTY,int RBX, int RBY)
-{
-    HDC hdcMEM; 
-    hdcMEM = CreateCompatibleDC(hDCtemp);
-
-    SelectObject(hdcMEM, hBitmap);//×¢Òâ´Ë´¦£¬½«Òª»­µÄÎ»Í¼Ñ¡ÈëhdcImage
-
-    StretchBlt(hdcMEM, LTX, LTY, RBX, RBY, hdcMEM, LTX, LTY, RBX, RBY, SRCCOPY); //ÕâÀï²ÅÄÜÕı³£»­Í¼£¬½«hdcImageÖĞµÄÎ»Í¼Ö±½Ó¸´ÖÆµ½ÄÚ´æ»º³åÇø
-    StretchBlt(hDCtemp, LTX, LTY, RBX, RBY, hdcMEM, LTX, LTY, RBX, RBY, SRCCOPY); //ÔÙ½«ÄÚ´æ»º³åÇøÖĞµÄÊı¾İ»æÖÆµ½ÆÁÄ»ÉÏ.
-
-    DeleteObject(hdcMEM);
-    return hDCtemp;
-
-}
 int main()
-{
-    CONSOLE_SCREEN_BUFFER_INFO csbi;         //¶¨Òå´°¿Ú»º³åÇøĞÅÏ¢½á¹¹Ìå  
-
-    HANDLE	hOut = GetStdHandle(STD_OUTPUT_HANDLE);//»ñµÃ±ê×¼ÊäÈëÉè±¸¾ä±ú
-    HANDLE	hIn = GetStdHandle(STD_INPUT_HANDLE);//»ñµÃ±ê×¼Êä³öÉè±¸¾ä±ú
-    INPUT_RECORD inputRecord;       //¶¨ÒåÊäÈëÊÂ¼ş½á¹¹Ìå  
+{         
+    //å®šä¹‰çª—å£ç¼“å†²åŒºä¿¡æ¯ç»“æ„ä½“  
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    //åŠ è½½å›¾ç‰‡èµ„æºï¼Œå»ºè®®å¦åŠ ä¸€ä¸ªresource.cppæ–‡ä»¶ä¸“é—¨åŠ è½½å„ç§å›¾ç‰‡èµ„æº
+    HBITMAP continue320180 = (HBITMAP)LoadImage(NULL, "continue320180.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
+    //è·å¾—æ ‡å‡†è¾“å‡ºè®¾å¤‡å¥æŸ„
+    HANDLE	hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    //è·å¾—æ ‡å‡†è¾“å…¥è®¾å¤‡å¥æŸ„
+    HANDLE	hIn = GetStdHandle(STD_INPUT_HANDLE);
+    //å®šä¹‰è¾“å…¥äº‹ä»¶ç»“æ„ä½“  
+    INPUT_RECORD inputRecord;
 
     DWORD mode;
     GetConsoleMode(hIn, &mode);
-    mode &= ~ENABLE_QUICK_EDIT_MODE;  //ÒÆ³ı¿ìËÙ±à¼­Ä£Ê½
-    mode &= ~ENABLE_INSERT_MODE;      //ÒÆ³ı²åÈëÄ£Ê½
-    //mode &= ~ENABLE_MOUSE_INPUT;??
+    mode &= ~ENABLE_QUICK_EDIT_MODE;  //ç§»é™¤å¿«é€Ÿç¼–è¾‘æ¨¡å¼
+    mode &= ~ENABLE_INSERT_MODE;      //ç§»é™¤æ’å…¥æ¨¡å¼
+    //mode &= ~ENABLE_MOUSE_INPUT;//ï¼Ÿä¸çŸ¥é“ä»€ä¹ˆæ¨¡å¼
     SetConsoleMode(hIn, mode);
-
+    //å¾—åˆ°å‰å°çª—å£ï¼ˆç”¨æˆ·å½“å‰å·¥ä½œçš„çª—å£ï¼‰å¥æŸ„
     HWND hwnd = GetForegroundWindow();
-
-    int windowsLenth = GetSystemMetrics(SM_CXSCREEN);            /* ÆÁÄ»¿í¶È ÏñËØ */
-    int windowsWidth = GetSystemMetrics(SM_CYSCREEN);            /* ÆÁÄ»¸ß¶È ÏñËØ */
-    LONG l_WinStyle = GetWindowLong(hwnd, GWL_STYLE);   /* »ñÈ¡´°¿ÚĞÅÏ¢ */
-
-    //std::cout << "x" << cx << std::endl;
-   // std::cout << "y" << cy << std::endl;
-    //Ëø¶¨´°¿ÚÈ«ÆÁ
+    /* è·å–çª—å£ä¿¡æ¯ */
+    LONG l_WinStyle = GetWindowLong(hwnd, GWL_STYLE);
+    //é”å®šçª—å£å…¨å±
     SetWindowLong(hwnd, GWL_STYLE, (l_WinStyle | WS_POPUP | WS_MAXIMIZE) & ~WS_THICKFRAME);
     SetWindowPos(hwnd, HWND_TOP, 0, 0, windowsLenth, windowsWidth, 0);
     // & ~WS_BORDER & ~WS_CAPTION
-    //È¡Ïû¹ö¶¯Ìõ
+    //å–æ¶ˆæ»šåŠ¨æ¡ï¼ˆä¸çŸ¥é“å…·ä½“æ˜¯å“ªä¸€å¥ï¼‰
     GetConsoleScreenBufferInfo(hOut, &csbi);
     SMALL_RECT rect = SizeOfWindow(hOut);
-    COORD size = { rect.Right + 1,rect.Bottom + 1 }; //¶¨Òå»º³åÇø´óĞ¡ 
+    //å®šä¹‰ç¼“å†²åŒºå¤§å° 
+    COORD size = { rect.Right + 1,rect.Bottom + 1 };
     SetConsoleScreenBufferSize(hOut, size);//point
-    /*std::cout << "right" << rect.Right << std::endl;
-    std::cout << "Bottom" << rect.Bottom << std::endl;
-    std::cout << "Left" << rect.Left << std::endl;
-    std::cout << "Top" << rect.Top << std::endl;*/
-    DWORD res;       //ÓÃÓÚ´æ´¢¶ÁÈ¡¼ÇÂ¼  
-    COORD pos;       //ÓÃÓÚ´æ´¢Êó±êµ±Ç°Î»ÖÃ  
-
-    DWORD write = 1;//ÔÚwriteConsoleInputÀïÊ¹ÓÃ
-
+    DWORD res;       //ç”¨äºå­˜å‚¨è¯»å–è®°å½•
+    COORD pos;       //ç”¨äºå­˜å‚¨é¼ æ ‡å½“å‰ä½ç½®  
+    HWND cmd = GetConsoleWindow();//æ§åˆ¶å°çª—å£å¥æŸ„
+    //å¾—åˆ°è®¾å¤‡åœºæ™¯ï¼ˆè®¾å¤‡æè¿°è¡¨ï¼‰å¥æŸ„ï¼šçª—å£DC
+    HDC hDC = GetDC(cmd);//å±å¹•æ˜¾ç¤ºDC
+    //ä¾æ®å±å¹•æ˜¾ç¤ºDCåˆ›å»ºå†…å­˜DCè®¾å¤‡æè¿°è¡¨å¥æŸ„
+    HDC dcMEM = CreateCompatibleDC(hDC);//å†…å­˜å…¼å®¹DC
     MSG msg;
-    UINT_PTR MyIDMenu = SetTimer(NULL, 1, 1, &TimerProc);
-    DWORD InNum = 0;
-    DWORD judge = 1;
+    int timerID = 1;//TimerID
+    int period = 40;//40msè°ƒç”¨ä¸€æ¬¡timer
+    UINT_PTR MyID1 = SetTimer(NULL, timerID, period, (TIMERPROC)&TimerProc);
+    DWORD InNum = 0;//ç”¨æ¥ä¿å­˜ç¼“å†²åŒºè¾“å…¥äº‹ä»¶çš„æ•°é‡
+    DWORD judge = 1;//ç”¨æ¥ä¸InNumæ¯”è¾ƒå¤§å°
+    //è½¬åŒ–ç±»å‹ï¼Œç¨åæŠŠInputNumä¼ é€’ç»™GetNumberOfConsoleInputEvents
     LPDWORD InputNum = &InNum;
 
-    POINT p;//Êó±ê×ø±ê
-    showMenu(hOut);
-    ReadConsoleInput(hIn, &inputRecord, 1, &res);       //¶ÁÈ¡ÊäÈëÊÂ¼ş
-
-
-
-
-
+    POINT p;//é¼ æ ‡åæ ‡
+    //åˆå§‹åŒ–inputRecord
+    ReadConsoleInput(hIn, &inputRecord, 1, &res);       //è¯»å–è¾“å…¥äº‹ä»¶
     for (;;)
-    {
-        //PeekConsoleInput(hIn, &inputRecord, 1000, &res);
-
-       // FlushConsoleInputBuffer(hIn);
+    {   
+        //å½“æœ‰è¾“å…¥äº‹ä»¶çš„æ—¶å€™æ‰è°ƒç”¨ReadConsoleInput
+        //é˜²æ­¢å‡½æ•°åœä¸‹æ¥ç­‰å¾…è¾“å…¥æ¶ˆæ¯ï¼Œé€ æˆä¸»å¾ªç¯é˜»å¡
         GetNumberOfConsoleInputEvents(hIn, InputNum);
         if (*InputNum >= judge)
         {
-            ReadConsoleInput(hIn, &inputRecord, 1, &res);       //¶ÁÈ¡ÊäÈëÊÂ¼ş
+            ReadConsoleInput(hIn, &inputRecord, 1, &res);       //è¯»å–è¾“å…¥äº‹ä»¶
         }
-        
-        pos = inputRecord.Event.MouseEvent.dwMousePosition;     //»ñµÃµ±Ç°Êó±êÎ»ÖÃ  
+        pos = inputRecord.Event.MouseEvent.dwMousePosition;     //è·å¾—å½“å‰é¼ æ ‡ä½ç½®  
         GetCursorPos(&p);
-
-        
-
-        if (inputRecord.EventType == MOUSE_EVENT)     //Èç¹ûµ±Ç°ÎªÊó±êÊÂ¼ş  
+        if (inputRecord.EventType == MOUSE_EVENT)     //å¦‚æœå½“å‰ä¸ºé¼ æ ‡äº‹ä»¶  
         {
-            if (inputRecord.Event.MouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+            if (inputRecord.Event.MouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED)//å·¦é”®ç‚¹å‡»
             {
-                //std::cout << p.x << std::endl << p.y << std::endl;
                 switch (flag)
                 {
-                case 0:
+                case BEFORE_START://è¿™ä¸ªç•Œé¢çš„æŒ‰é’®æœ‰ï¼šå¼€å§‹ï¼Œç»§ç»­ï¼Œæˆå°±ï¼Œé€€å‡ºï¼Œè®¾ç½®ï¼ˆï¼Ÿï¼‰
                 {
-                    //SetConsoleCursorPosition(hOut, pos);//°Ñ¹â±êÒÆ¶¯µ½posÎ»ÖÃ
-                    //std::cout << "x: " << p.x << "y: " << p.y << std::endl;
+                    //SetConsoleCursorPosition(hOut, pos);//æŠŠå…‰æ ‡ç§»åŠ¨åˆ°posä½ç½®
+                    //è¿™é‡Œæœ€å¥½åŒ…è£…æˆä¸€ä¸ªåˆ¤æ–­ä½ç½®åœ¨ä¸åœ¨çŸ©å½¢é‡Œé¢çš„å‡½æ•°
                     if (p.x > (windowsLenth / 2) - 160&& p.x < (windowsLenth / 2) + 160 && p.y > (3 * windowsWidth / 5) - 90 && p.y < (3 * windowsWidth / 5) + 90)
                     {
                         system("cls");
-                        //KillTimer(NULL, MyIDMenu);
+                        //KillTimer(NULL, MyID1);
                         flag = BEFORE_INIT;
                     }
                     break;
@@ -141,90 +117,82 @@ int main()
                 }
             }
         }
-        //Èç¹ûµ±Ç°ÊÂ¼şÊÇ¼üÅÌÊÂ¼ş
+        //å¦‚æœå½“å‰äº‹ä»¶æ˜¯é”®ç›˜äº‹ä»¶
         else if (inputRecord.EventType == KEY_EVENT)
         {
-            if (inputRecord.Event.KeyEvent.wVirtualKeyCode == 0x57 && inputRecord.Event.KeyEvent.bKeyDown  && hh.direction != 'W')
+            switch (flag)
             {
-                //ÓÃ»§°´ÏÂÁËW
-                hh.jump();
-                inputRecord.Event.KeyEvent.wVirtualKeyCode = '0';//ÎªÁËÖªµÀ´ËÊ±Ã»ÓĞ°´W£¬ÎÒ°ÑËûÉèÖÃ³ÉÏÖÔÚÔÚ°´0
-               
+            case PLAYING_GAME:
+            {
+                if (inputRecord.Event.KeyEvent.wVirtualKeyCode == 0x57 && inputRecord.Event.KeyEvent.bKeyDown && hh.direction != 'W')
+                {
+                    //ç”¨æˆ·æŒ‰ä¸‹äº†W
+                    hh.jump();
+                    inputRecord.Event.KeyEvent.wVirtualKeyCode = '0';//ä¸ºäº†çŸ¥é“æ­¤æ—¶æ²¡æœ‰æŒ‰Wï¼Œæˆ‘æŠŠä»–è®¾ç½®æˆç°åœ¨åœ¨æŒ‰0
+
+                }
+                break;
             }
-            
+            }
         }
         switch (flag)
         {
-        case 0:
-            break;
-        case 1:
+        case BEFORE_START:
         {
-            //showMenu(hOut);
+            //æŠŠcontinueç§»åŠ¨åˆ°å¥¹è¯¥å‘†ç€çš„ä½ç½®
+            hh.setX(windowsLenth / 2);
+            hh.setY(3 * windowsWidth / 5);
+            DrawBmp(hDC,dcMEM, continue320180, hh, 320, 180);//ç”»åˆ°å†…å­˜dcä¸Š
+            break;
+        }
+        case BEFORE_INIT:
+        {
+            //æ”¹å˜æ˜“æ‹‰ç½ä½ç½®ï¼Œå½“ç„¶ï¼Œç°åœ¨ä½¿ç”¨continueçš„å›¾æ ‡æš‚ä»£ï¼Œåé¢ä¼šæ›´æ”¹
+            hh.setX(windowsLenth / 8);
+            hh.setY(4*windowsWidth / 5);
             flag = PLAYING_GAME;
             break;
         }
-        case 2:
+        case PLAYING_GAME:
         {
-            system("cls");
+            //system("cls");
+            //updateï¼Œæ›´æ–°æ•°æ®ï¼Œåé¢ä¼šå­¦ä¹ æ¸¸æˆä¸»å¾ªç¯ï¼Œæ§åˆ¶æ›´æ–°æ•°æ®å’Œæ¸²æŸ“çš„é¢‘ç‡ï¼Œç›®å‰è¿˜æ²¡åš
             hh.move();
-            hh.draw();
             hh.changeState();
+            //drawï¼Œ
+            DrawBmp(hDC,dcMEM, continue320180, hh, 320, 180);//
             break;
         }
 
         }
+        //å…·ä½“ä½œç”¨ä¸äº†è§£ï¼ŒæŠŠgetmessageæ¢æˆpeekmessageé˜²æ­¢é˜»å¡ä¸»å¾ªç¯
         PeekMessage(&msg, NULL, 0, 0,PM_NOREMOVE);
-            if(msg.message == WM_TIMER)
-            {
-                TranslateMessage(&msg);
-                DispatchMessage(&msg);
-            }
-
-
+        if(msg.message == WM_TIMER)
+        {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+        //æŠŠå†…å­˜dcä¸Šçš„ä¸œè¥¿ä¸€æ¬¡æ€§ç”»åˆ°æ˜¾ç¤ºdcä¸Š
+        BitBlt(hDC, 0, 0, windowsLenth, windowsWidth, dcMEM, 0, 0, SRCCOPY); //æ­¤å¤„ç¬¬ä¸€ä¸ªå‚æ•°æ‰ä¸ºhDC,å³çª—å£å¥æŸ„
     }
     CloseHandle(hOut);
     CloseHandle(hIn);
-
+    DestroyWindow(hwnd);
+    DeleteDC(hDC);
+    DeleteDC(dcMEM);
+    DestroyWindow(cmd);
     return 0;
 
 }
-void showMenu(HANDLE screen)
-{
-
-    int cx = GetSystemMetrics(SM_CXSCREEN);            /* ÆÁÄ»¿í¶È ÏñËØ */
-    int cy = GetSystemMetrics(SM_CYSCREEN);            /* ÆÁÄ»¸ß¶È ÏñËØ */
-
-    HMODULE hKernel32 = GetModuleHandle("kernel32");
-    HWND cmd = GetConsoleWindow();//¿ØÖÆÌ¨´°¿Ú¾ä±ú
-
-    HDC dc = GetDC(cmd);
-    HBITMAP hBitmap;
-    HDC cmdmem = CreateCompatibleDC(dc);
-    hBitmap = (HBITMAP)LoadImage(NULL, "continue320180.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
-
-
-
-    SelectObject(cmdmem, hBitmap);
-
-    int buttonStartWidth = 320;
-    int buttonStartHeight = 180;
-
-    BitBlt(dc, (cx / 2), (3*cy / 5), buttonStartWidth, buttonStartHeight, cmdmem, 0, 0, SRCCOPY);
-
-    return;
-}
 void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT idEvent, DWORD dwTime)
 {
-    HANDLE	hOut = GetStdHandle(STD_OUTPUT_HANDLE);//»ñµÃ±ê×¼ÊäÈëÉè±¸¾ä±ú
-//WM_TIMER
+
     if (flag == BEFORE_START)
     {
-        showMenu(hOut);
     }
     else
     {
 
-        hh.draw();
     }
 
 

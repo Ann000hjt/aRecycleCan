@@ -1,10 +1,3 @@
 #pragma once
-#include"Bird.h"
-#include"Column.h"
-
-
-void drawAll(Bird bird,Column cArr[])
-{
-	bird.drawBird();
-	drawColumn(cArr, 4);
-}
+class Object;
+HDC DrawBmp(HDC hDC, HDC dcMEM, HBITMAP hBitmap, Object& object, int bmpLenth, int bmpWidth);
