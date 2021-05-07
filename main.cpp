@@ -12,98 +12,98 @@ const int BEFORE_START = 0;
 const int BEFORE_INIT = 1;
 const int PLAYING_GAME = 2;
 
-const int vx = -8;//±³¾°ÒÆ¶¯ËÙ¶È
-const int gravity = 3;//Ä£ÄâÖØÁ¦
+const int vx = -8;//èƒŒæ™¯ç§»åŠ¨é€Ÿåº¦
+const int gravity = 3;//æ¨¡æ‹Ÿé‡åŠ›
 
-int windowsLenth = GetSystemMetrics(SM_CXSCREEN);            /* ÆÁÄ»¿í¶È ÏñËØ */
-int windowsWidth = GetSystemMetrics(SM_CYSCREEN);            /* ÆÁÄ»¸ß¶È ÏñËØ */
+int windowsLenth = GetSystemMetrics(SM_CXSCREEN);            /* å±å¹•å®½åº¦ åƒç´  */
+int windowsWidth = GetSystemMetrics(SM_CYSCREEN);            /* å±å¹•é«˜åº¦ åƒç´  */
 
-Can hh;//´´½¨Ö÷½ÇÒ×À­¹Þ
+Can hh;//åˆ›å»ºä¸»è§’æ˜“æ‹‰ç½
 
-static int flag = BEFORE_START;//ÉèÖÃÓÎÏ·×´Ì¬Îª£º½øÈëÓÎÏ·Ç°
+static int flag = BEFORE_START;//è®¾ç½®æ¸¸æˆçŠ¶æ€ä¸ºï¼šè¿›å…¥æ¸¸æˆå‰
 
 
 
+//å–æ¶ˆæ»šåŠ¨æ¡
 SMALL_RECT SizeOfWindow(HANDLE hConsoleOutput)
 {
     CONSOLE_SCREEN_BUFFER_INFO info;
     GetConsoleScreenBufferInfo(hConsoleOutput, &info);
     return info.srWindow;
 }
-void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT idEvent, DWORD dwTime);//»Øµ÷º¯Êý
 int main()
 {         
-    //¶¨Òå´°¿Ú»º³åÇøÐÅÏ¢½á¹¹Ìå  
+    //å®šä¹‰çª—å£ç¼“å†²åŒºä¿¡æ¯ç»“æž„ä½“  
     CONSOLE_SCREEN_BUFFER_INFO csbi;
-    //¼ÓÔØÍ¼Æ¬×ÊÔ´£¬½¨ÒéÁí¼ÓÒ»¸öresource.cppÎÄ¼þ×¨ÃÅ¼ÓÔØ¸÷ÖÖÍ¼Æ¬×ÊÔ´
+    //åŠ è½½å›¾ç‰‡èµ„æºï¼Œå»ºè®®å¦åŠ ä¸€ä¸ªresource.cppæ–‡ä»¶ä¸“é—¨åŠ è½½å„ç§å›¾ç‰‡èµ„æº
     HBITMAP continue320180 = (HBITMAP)LoadImage(NULL, "continue320180.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
-    //»ñµÃ±ê×¼Êä³öÉè±¸¾ä±ú
+    //èŽ·å¾—æ ‡å‡†è¾“å‡ºè®¾å¤‡å¥æŸ„
     HANDLE	hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-    //»ñµÃ±ê×¼ÊäÈëÉè±¸¾ä±ú
+    //èŽ·å¾—æ ‡å‡†è¾“å…¥è®¾å¤‡å¥æŸ„
     HANDLE	hIn = GetStdHandle(STD_INPUT_HANDLE);
-    //¶¨ÒåÊäÈëÊÂ¼þ½á¹¹Ìå  
+    //å®šä¹‰è¾“å…¥äº‹ä»¶ç»“æž„ä½“  
     INPUT_RECORD inputRecord;
 
     DWORD mode;
     GetConsoleMode(hIn, &mode);
-    mode &= ~ENABLE_QUICK_EDIT_MODE;  //ÒÆ³ý¿ìËÙ±à¼­Ä£Ê½
-    mode &= ~ENABLE_INSERT_MODE;      //ÒÆ³ý²åÈëÄ£Ê½
-    //mode &= ~ENABLE_MOUSE_INPUT;//£¿²»ÖªµÀÊ²Ã´Ä£Ê½
+    mode &= ~ENABLE_QUICK_EDIT_MODE;  //ç§»é™¤å¿«é€Ÿç¼–è¾‘æ¨¡å¼
+    mode &= ~ENABLE_INSERT_MODE;      //ç§»é™¤æ’å…¥æ¨¡å¼
+    //mode &= ~ENABLE_MOUSE_INPUT;//ï¼Ÿä¸çŸ¥é“ä»€ä¹ˆæ¨¡å¼
     SetConsoleMode(hIn, mode);
-    //µÃµ½Ç°Ì¨´°¿Ú£¨ÓÃ»§µ±Ç°¹¤×÷µÄ´°¿Ú£©¾ä±ú
+    //å¾—åˆ°å‰å°çª—å£ï¼ˆç”¨æˆ·å½“å‰å·¥ä½œçš„çª—å£ï¼‰å¥æŸ„
     HWND hwnd = GetForegroundWindow();
-    /* »ñÈ¡´°¿ÚÐÅÏ¢ */
+    /* èŽ·å–çª—å£ä¿¡æ¯ */
     LONG l_WinStyle = GetWindowLong(hwnd, GWL_STYLE);
-    //Ëø¶¨´°¿ÚÈ«ÆÁ
+    //é”å®šçª—å£å…¨å±
     SetWindowLong(hwnd, GWL_STYLE, (l_WinStyle | WS_POPUP | WS_MAXIMIZE) & ~WS_THICKFRAME);
     SetWindowPos(hwnd, HWND_TOP, 0, 0, windowsLenth, windowsWidth, 0);
     // & ~WS_BORDER & ~WS_CAPTION
-    //È¡Ïû¹ö¶¯Ìõ£¨²»ÖªµÀ¾ßÌåÊÇÄÄÒ»¾ä£©
+    //å–æ¶ˆæ»šåŠ¨æ¡ï¼ˆä¸çŸ¥é“å…·ä½“æ˜¯å“ªä¸€å¥ï¼‰
     GetConsoleScreenBufferInfo(hOut, &csbi);
     SMALL_RECT rect = SizeOfWindow(hOut);
-    //¶¨Òå»º³åÇø´óÐ¡ 
+    //å®šä¹‰ç¼“å†²åŒºå¤§å° 
     COORD size = { rect.Right + 1,rect.Bottom + 1 };
     SetConsoleScreenBufferSize(hOut, size);//point
-    DWORD res;       //ÓÃÓÚ´æ´¢¶ÁÈ¡¼ÇÂ¼
-    COORD pos;       //ÓÃÓÚ´æ´¢Êó±êµ±Ç°Î»ÖÃ  
-    HWND cmd = GetConsoleWindow();//¿ØÖÆÌ¨´°¿Ú¾ä±ú
-    //µÃµ½Éè±¸³¡¾°£¨Éè±¸ÃèÊö±í£©¾ä±ú£º´°¿ÚDC
-    HDC hDC = GetDC(cmd);//ÆÁÄ»ÏÔÊ¾DC
-    //ÒÀ¾ÝÆÁÄ»ÏÔÊ¾DC´´½¨ÄÚ´æDCÉè±¸ÃèÊö±í¾ä±ú
-    HDC dcMEM = CreateCompatibleDC(hDC);//ÄÚ´æ¼æÈÝDC
+    DWORD res;       //ç”¨äºŽå­˜å‚¨è¯»å–è®°å½•
+    COORD pos;       //ç”¨äºŽå­˜å‚¨é¼ æ ‡å½“å‰ä½ç½®  
+    HWND cmd = GetConsoleWindow();//æŽ§åˆ¶å°çª—å£å¥æŸ„
+    //å¾—åˆ°è®¾å¤‡åœºæ™¯ï¼ˆè®¾å¤‡æè¿°è¡¨ï¼‰å¥æŸ„ï¼šçª—å£DC
+    HDC hDC = GetDC(cmd);//å±å¹•æ˜¾ç¤ºDC
+    //ä¾æ®å±å¹•æ˜¾ç¤ºDCåˆ›å»ºå†…å­˜DCè®¾å¤‡æè¿°è¡¨å¥æŸ„
+    HDC dcMEM = CreateCompatibleDC(hDC);//å†…å­˜å…¼å®¹DC
     MSG msg;
     int timerID = 1;//TimerID
-    int period = 40;//40msµ÷ÓÃÒ»´Îtimer
+    int period = 40;//40msè°ƒç”¨ä¸€æ¬¡timer
     UINT_PTR MyID1 = SetTimer(NULL, timerID, period, (TIMERPROC)&TimerProc);
-    DWORD InNum = 0;//ÓÃÀ´±£´æ»º³åÇøÊäÈëÊÂ¼þµÄÊýÁ¿
-    DWORD judge = 1;//ÓÃÀ´ÓëInNum±È½Ï´óÐ¡
-    //×ª»¯ÀàÐÍ£¬ÉÔºó°ÑInputNum´«µÝ¸øGetNumberOfConsoleInputEvents
+    DWORD InNum = 0;//ç”¨æ¥ä¿å­˜ç¼“å†²åŒºè¾“å…¥äº‹ä»¶çš„æ•°é‡
+    DWORD judge = 1;//ç”¨æ¥ä¸ŽInNumæ¯”è¾ƒå¤§å°
+    //è½¬åŒ–ç±»åž‹ï¼Œç¨åŽæŠŠInputNumä¼ é€’ç»™GetNumberOfConsoleInputEvents
     LPDWORD InputNum = &InNum;
 
-    POINT p;//Êó±ê×ø±ê
-    //³õÊ¼»¯inputRecord
-    ReadConsoleInput(hIn, &inputRecord, 1, &res);       //¶ÁÈ¡ÊäÈëÊÂ¼þ
+    POINT p;//é¼ æ ‡åæ ‡
+    //åˆå§‹åŒ–inputRecord
+    ReadConsoleInput(hIn, &inputRecord, 1, &res);       //è¯»å–è¾“å…¥äº‹ä»¶
     for (;;)
     {   
-        //µ±ÓÐÊäÈëÊÂ¼þµÄÊ±ºò²Åµ÷ÓÃReadConsoleInput
-        //·ÀÖ¹º¯ÊýÍ£ÏÂÀ´µÈ´ýÊäÈëÏûÏ¢£¬Ôì³ÉÖ÷Ñ­»·×èÈû
+        //å½“æœ‰è¾“å…¥äº‹ä»¶çš„æ—¶å€™æ‰è°ƒç”¨ReadConsoleInput
+        //é˜²æ­¢å‡½æ•°åœä¸‹æ¥ç­‰å¾…è¾“å…¥æ¶ˆæ¯ï¼Œé€ æˆä¸»å¾ªçŽ¯é˜»å¡ž
         GetNumberOfConsoleInputEvents(hIn, InputNum);
         if (*InputNum >= judge)
         {
-            ReadConsoleInput(hIn, &inputRecord, 1, &res);       //¶ÁÈ¡ÊäÈëÊÂ¼þ
+            ReadConsoleInput(hIn, &inputRecord, 1, &res);       //è¯»å–è¾“å…¥äº‹ä»¶
         }
-        pos = inputRecord.Event.MouseEvent.dwMousePosition;     //»ñµÃµ±Ç°Êó±êÎ»ÖÃ  
+        pos = inputRecord.Event.MouseEvent.dwMousePosition;     //èŽ·å¾—å½“å‰é¼ æ ‡ä½ç½®  
         GetCursorPos(&p);
-        if (inputRecord.EventType == MOUSE_EVENT)     //Èç¹ûµ±Ç°ÎªÊó±êÊÂ¼þ  
+        if (inputRecord.EventType == MOUSE_EVENT)     //å¦‚æžœå½“å‰ä¸ºé¼ æ ‡äº‹ä»¶  
         {
-            if (inputRecord.Event.MouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED)//×ó¼üµã»÷
+            if (inputRecord.Event.MouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED)//å·¦é”®ç‚¹å‡»
             {
                 switch (flag)
                 {
-                case BEFORE_START://Õâ¸ö½çÃæµÄ°´Å¥ÓÐ£º¿ªÊ¼£¬¼ÌÐø£¬³É¾Í£¬ÍË³ö£¬ÉèÖÃ£¨£¿£©
+                case BEFORE_START://è¿™ä¸ªç•Œé¢çš„æŒ‰é’®æœ‰ï¼šå¼€å§‹ï¼Œç»§ç»­ï¼Œæˆå°±ï¼Œé€€å‡ºï¼Œè®¾ç½®ï¼ˆï¼Ÿï¼‰
                 {
-                    //SetConsoleCursorPosition(hOut, pos);//°Ñ¹â±êÒÆ¶¯µ½posÎ»ÖÃ
-                    //ÕâÀï×îºÃ°ü×°³ÉÒ»¸öÅÐ¶ÏÎ»ÖÃÔÚ²»ÔÚ¾ØÐÎÀïÃæµÄº¯Êý
+                    //SetConsoleCursorPosition(hOut, pos);//æŠŠå…‰æ ‡ç§»åŠ¨åˆ°posä½ç½®
+                    //è¿™é‡Œæœ€å¥½åŒ…è£…æˆä¸€ä¸ªåˆ¤æ–­ä½ç½®åœ¨ä¸åœ¨çŸ©å½¢é‡Œé¢çš„å‡½æ•°
                     if (p.x > (windowsLenth / 2) - 160&& p.x < (windowsLenth / 2) + 160 && p.y > (3 * windowsWidth / 5) - 90 && p.y < (3 * windowsWidth / 5) + 90)
                     {
                         system("cls");
@@ -117,7 +117,7 @@ int main()
                 }
             }
         }
-        //Èç¹ûµ±Ç°ÊÂ¼þÊÇ¼üÅÌÊÂ¼þ
+        //å¦‚æžœå½“å‰äº‹ä»¶æ˜¯é”®ç›˜äº‹ä»¶
         else if (inputRecord.EventType == KEY_EVENT)
         {
             switch (flag)
@@ -126,9 +126,9 @@ int main()
             {
                 if (inputRecord.Event.KeyEvent.wVirtualKeyCode == 0x57 && inputRecord.Event.KeyEvent.bKeyDown && hh.direction != 'W')
                 {
-                    //ÓÃ»§°´ÏÂÁËW
+                    //ç”¨æˆ·æŒ‰ä¸‹äº†W
                     hh.jump();
-                    inputRecord.Event.KeyEvent.wVirtualKeyCode = '0';//ÎªÁËÖªµÀ´ËÊ±Ã»ÓÐ°´W£¬ÎÒ°ÑËûÉèÖÃ³ÉÏÖÔÚÔÚ°´0
+                    inputRecord.Event.KeyEvent.wVirtualKeyCode = '0';//ä¸ºäº†çŸ¥é“æ­¤æ—¶æ²¡æœ‰æŒ‰Wï¼Œæˆ‘æŠŠä»–è®¾ç½®æˆçŽ°åœ¨åœ¨æŒ‰0
 
                 }
                 break;
@@ -139,15 +139,15 @@ int main()
         {
         case BEFORE_START:
         {
-            //°ÑcontinueÒÆ¶¯µ½Ëý¸Ã´ô×ÅµÄÎ»ÖÃ
+            //æŠŠcontinueç§»åŠ¨åˆ°å¥¹è¯¥å‘†ç€çš„ä½ç½®
             hh.setX(windowsLenth / 2);
             hh.setY(3 * windowsWidth / 5);
-            DrawBmp(hDC,dcMEM, continue320180, hh, 320, 180);//»­µ½ÄÚ´ædcÉÏ
+            DrawBmp(hDC,dcMEM, continue320180, hh, 320, 180);//ç”»åˆ°å†…å­˜dcä¸Š
             break;
         }
         case BEFORE_INIT:
         {
-            //¸Ä±äÒ×À­¹ÞÎ»ÖÃ£¬µ±È»£¬ÏÖÔÚÊ¹ÓÃcontinueµÄÍ¼±êÔÝ´ú£¬ºóÃæ»á¸ü¸Ä
+            //æ”¹å˜æ˜“æ‹‰ç½ä½ç½®ï¼Œå½“ç„¶ï¼ŒçŽ°åœ¨ä½¿ç”¨continueçš„å›¾æ ‡æš‚ä»£ï¼ŒåŽé¢ä¼šæ›´æ”¹
             hh.setX(windowsLenth / 8);
             hh.setY(4*windowsWidth / 5);
             flag = PLAYING_GAME;
@@ -156,24 +156,24 @@ int main()
         case PLAYING_GAME:
         {
             //system("cls");
-            //update£¬¸üÐÂÊý¾Ý£¬ºóÃæ»áÑ§Ï°ÓÎÏ·Ö÷Ñ­»·£¬¿ØÖÆ¸üÐÂÊý¾ÝºÍäÖÈ¾µÄÆµÂÊ£¬Ä¿Ç°»¹Ã»×ö
+            //updateï¼Œæ›´æ–°æ•°æ®ï¼ŒåŽé¢ä¼šå­¦ä¹ æ¸¸æˆä¸»å¾ªçŽ¯ï¼ŒæŽ§åˆ¶æ›´æ–°æ•°æ®å’Œæ¸²æŸ“çš„é¢‘çŽ‡ï¼Œç›®å‰è¿˜æ²¡åš
             hh.move();
             hh.changeState();
-            //draw£¬
+            //drawï¼Œ
             DrawBmp(hDC,dcMEM, continue320180, hh, 320, 180);//
             break;
         }
 
         }
-        //¾ßÌå×÷ÓÃ²»ÁË½â£¬°Ñgetmessage»»³Épeekmessage·ÀÖ¹×èÈûÖ÷Ñ­»·
+        //å…·ä½“ä½œç”¨ä¸äº†è§£ï¼ŒæŠŠgetmessageæ¢æˆpeekmessageé˜²æ­¢é˜»å¡žä¸»å¾ªçŽ¯
         PeekMessage(&msg, NULL, 0, 0,PM_NOREMOVE);
         if(msg.message == WM_TIMER)
         {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
-        //°ÑÄÚ´ædcÉÏµÄ¶«Î÷Ò»´ÎÐÔ»­µ½ÏÔÊ¾dcÉÏ
-        BitBlt(hDC, 0, 0, windowsLenth, windowsWidth, dcMEM, 0, 0, SRCCOPY); //´Ë´¦µÚÒ»¸ö²ÎÊý²ÅÎªhDC,¼´´°¿Ú¾ä±ú
+        //æŠŠå†…å­˜dcä¸Šçš„ä¸œè¥¿ä¸€æ¬¡æ€§ç”»åˆ°æ˜¾ç¤ºdcä¸Š
+        BitBlt(hDC, 0, 0, windowsLenth, windowsWidth, dcMEM, 0, 0, SRCCOPY); //æ­¤å¤„ç¬¬ä¸€ä¸ªå‚æ•°æ‰ä¸ºhDC,å³çª—å£å¥æŸ„
     }
     CloseHandle(hOut);
     CloseHandle(hIn);
