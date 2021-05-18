@@ -258,6 +258,4 @@ void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT idEvent, DWORD dwTime)
     {
 
     }
-
-
 }
