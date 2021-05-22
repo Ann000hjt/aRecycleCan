@@ -120,22 +120,10 @@ void Barrier::init()
     isCrush = false;
 }
 
-int Barrier::getLength()
-{
-    return barrierLength;
-}
-int Barrier::getWidth()
-{
-    return barrierWidth;
-}
-
 
 Button::Button(int x, int y, int bmpLength, int bmpWidth)
 {
-    this->x = x;
-    this->y = y;
-    buttonLength = bmpLength;
-    buttonWidth = bmpWidth;
+    isCrush = true;
 }
 int Button::getLength()
 {

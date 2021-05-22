@@ -242,11 +242,10 @@ int main()
                 case BEFORE_START://这个界面的按钮有：开始，继续，成就，退出，设置（？）
                 {
 
-                    cout << " x:" << p.x << " y:" << p.y << endl;
-                    cout << "windowsLength:" << windowsLenth1 << endl;
-                    //cout << correctX*newGame.getX() << " " << correctY*newGame.getY() << endl;
-                    //cout << newGame.getLength() << endl;
-                    
+                   /* cout << " x:" << p.x << " y:" << p.y << endl;
+                    cout << correctX*newGame.getX() << " " << correctY*newGame.getY() << endl;
+                    cout << newGame.getLength() << endl;*/
+
                     //SetConsoleCursorPosition(hOut, pos);//把光标移动到pos位置
                     if(isKickButton(p.x,p.y,newGame,0))
                     {
