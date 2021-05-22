@@ -19,13 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="background.bmp" />
-    <Image Include="can180320.bmp" />
-    <Image Include="continue320180.bmp" />
-    <Image Include="newGame320180.bmp" />
-    <Image Include="unrecyclable200200.bmp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="drawAll.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object.cpp" />
@@ -37,6 +30,22 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="positonTest.h" />
     <ClInclude Include="upDateData.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="x64\Debug\bmp\achievement16090.bmp" />
+    <Image Include="x64\Debug\bmp\achievement240125.bmp" />
+    <Image Include="x64\Debug\bmp\back10060.bmp" />
+    <Image Include="x64\Debug\bmp\back16090.bmp" />
+    <Image Include="x64\Debug\bmp\background.bmp" />
+    <Image Include="x64\Debug\bmp\coin6040.bmp" />
+    <Image Include="x64\Debug\bmp\continue240125.bmp" />
+    <Image Include="x64\Debug\bmp\initBackground1280720.bmp" />
+    <Image Include="x64\Debug\bmp\life4580.bmp" />
+    <Image Include="x64\Debug\bmp\newGame240125.bmp" />
+    <Image Include="x64\Debug\bmp\overcan180320.bmp" />
+    <Image Include="x64\Debug\bmp\plusLife100100.bmp" />
+    <Image Include="x64\Debug\bmp\unrecyclable130130.bmp" />
+    <Image Include="x64\Debug\overBackaground1280720.bmp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -63,7 +72,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
