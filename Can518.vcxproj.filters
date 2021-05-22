@@ -15,23 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="background.bmp">
-      <Filter>源文件</Filter>
-    </Image>
-    <Image Include="can180320.bmp">
-      <Filter>源文件</Filter>
-    </Image>
-    <Image Include="continue320180.bmp">
-      <Filter>源文件</Filter>
-    </Image>
-    <Image Include="newGame320180.bmp">
-      <Filter>源文件</Filter>
-    </Image>
-    <Image Include="unrecyclable200200.bmp">
-      <Filter>源文件</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="drawAll.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -61,5 +44,49 @@
     <ClInclude Include="upDateData.h">
       <Filter>源文件</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="x64\Debug\bmp\achievement16090.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="x64\Debug\bmp\achievement240125.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="x64\Debug\bmp\back10060.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="x64\Debug\bmp\back16090.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="x64\Debug\bmp\background.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="x64\Debug\bmp\coin6040.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="x64\Debug\bmp\initBackground1280720.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="x64\Debug\bmp\life4580.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="x64\Debug\bmp\newGame240125.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="x64\Debug\bmp\plusLife100100.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="x64\Debug\bmp\unrecyclable130130.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="x64\Debug\bmp\continue240125.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="x64\Debug\overBackaground1280720.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="x64\Debug\bmp\overcan180320.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>

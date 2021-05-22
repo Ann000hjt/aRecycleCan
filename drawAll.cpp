@@ -1,8 +1,10 @@
 #include<Windows.h>
 #include"drawAll.h"
 #include"Object.h"
-extern int windowsLenth;
-extern int windowsWidth;
+
+extern int windowsLenth1;
+extern int windowsWidth1;
+
 //（不知道有没有更好的处理方法）把DrawBmp重载，分为普通画图和游戏中的渲染画图
 //普通画图
 //加了一个bool值判断是否是第一次画，不是第一次的话，不用背景图替换
@@ -15,7 +17,7 @@ HDC DrawBmp(HDC hDC, HDC dcMEM, HBITMAP hBitmap, Object& object, int bmpLenth, i
     if (isFirst)
     {
         //此处使用hDC(窗口DC)Create位图，否则图片只有黑白两色
-        HBITMAP bmpBackground = CreateCompatibleBitmap(hDC, windowsLenth, windowsWidth);//参数分别为：hDC，位图长，位图宽
+        HBITMAP bmpBackground = CreateCompatibleBitmap(hDC, windowsLenth1, windowsWidth1);//参数分别为：hDC，位图长，位图宽
         //内存dc一号(dcMEM)select背景图片
         SelectObject(dcMEM, bmpBackground);
     }
@@ -58,7 +60,7 @@ HDC DrawBmp(HDC hDC,HDC dcMEM, HBITMAP hBitmap, Can & can,int bmpLenth ,int bmpW
     if (isFirst)
     {
         //此处使用hDC(窗口DC)Create位图，否则图片只有黑白两色
-        HBITMAP bmpBackground = CreateCompatibleBitmap(hDC, windowsLenth, windowsWidth);//参数分别为：hDC，位图长，位图宽
+        HBITMAP bmpBackground = CreateCompatibleBitmap(hDC, windowsLenth1, windowsWidth1);//参数分别为：hDC，位图长，位图宽
         //内存dc一号(dcMEM)select背景图片
         SelectObject(dcMEM, bmpBackground);
     }

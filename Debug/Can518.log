@@ -1,3 +1,2 @@
 ﻿  main.cpp
-D:\C++\Can518\main.cpp(230,44): warning C4244: “=”: 从“ULONGLONG”转换到“DWORD”，可能丢失数据
   Can518.vcxproj -> D:\C++\Can518\Debug\Can518.exe
