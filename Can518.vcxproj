@@ -19,6 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <Image Include="background.bmp" />
+    <Image Include="can180320.bmp" />
+    <Image Include="continue320180.bmp" />
+    <Image Include="newGame320180.bmp" />
+    <Image Include="unrecyclable200200.bmp" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="drawAll.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object.cpp" />

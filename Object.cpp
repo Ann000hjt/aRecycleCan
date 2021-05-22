@@ -46,6 +46,15 @@ void Can::changeState()
         this->direction = 'D';
     }
 }
+
+int Can::getLength()
+{
+    return canLength;
+}
+int Can::getWidth()
+{
+    return canWidth;
+}
 void Can::plusScore()
 {
     score++;

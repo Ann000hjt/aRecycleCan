@@ -54,25 +54,54 @@ bool isCoinEaten(Can& can, Coin& coin)
 		return false;
 }
 //圆形碰撞检测(搬代码)，还要改 先用上面代替了
+//圆形碰撞检测
 bool isBarrierCrush(Can& can, Barrier& barrier)
 {
-	int canLenth = 150;
-	int canWidth = 250;
-	//有点难躲，我把检测范围减小了
-	int barrierLenth = 100;
-	int barrierWidth = 100;
+	int circleX = barrier.getX() + barrier.getLength() / 2;//障碍物中心的X坐标
+	int radius = barrier.getLength() / 2;//障碍物（圆）的半径
+	int circleY = barrier.getY() + barrier.getWidth() / 2;//障碍物中心的Y坐标
 
-	//碰撞检测左右都除以系数相消了
-	//拉环飞过易拉罐就检测右边 没飞过就检测左边；拉环在易拉罐下面就检测下面 反之检测上面
-	if (can.getX() + canLenth <= barrier.getX() ?
-		can.getX() + canLenth >= barrier.getX() : can.getX() <= barrier.getX() + barrierLenth)
+	int RecL = can.getX();//矩形左坐标
+	int RecT = can.getY();//矩形上坐标
+	int RecR = can.getX()+can.getLength();//矩形右坐标
+	int RecB = can.getY()+can.getWidth();//矩形下坐标
+
+	//判断矩形离圆最近的点的X坐标
+	int closeX;
+	if (RecR < circleX)//矩形在圆形左边DO
 	{
-		if (can.getY() + canWidth <= barrier.getY() ?
-			can.getY() + canWidth >= barrier.getY() : can.getY() <= barrier.getY() + barrierWidth)
-			return true;
-		else
-			return false;
+		closeX = RecR;
 	}
-	else
-		return false;
+	else if (RecL > circleX)//矩形在圆形右边OD
+	{
+		closeX = RecL;
+	}
+	else//有重合部分，或者矩形在圆形上下  D
+	{                                   //O
+		closeX = circleX;
+	}
+	//判断矩形离圆最近的点的Y坐标
+	int closeY;
+	if (RecB < circleY)//矩形在圆形上边
+	{
+		closeY = RecB;
+	}
+	else if (RecT > circleY)//矩形在圆形下边
+	{
+		closeY = RecT;
+	}
+	else//有重合部分，或者矩形在圆形左右
+	{                                   
+		closeY = circleY;
+	}
+	int RFang = radius * radius;
+
+	int DFang = pow(closeX - circleX, 2) + pow(closeY - circleY, 2);
+
+	bool isCrush = false;
+	if (DFang <= RFang)
+	{
+		isCrush = true;
+	}
+	return isCrush;
 }

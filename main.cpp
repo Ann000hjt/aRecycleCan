@@ -9,6 +9,30 @@
 #include"upDateData.h"
 #include"positonTest.h"
 
+
+#define qdo 262 
+#define qre 294
+#define qmi 330
+#define qfa 349
+#define qso 392
+#define qla 440
+#define qsi 494
+#define do 523
+#define re 578
+#define mi 659
+#define fa 698
+#define so 784
+#define la 880
+#define si 988
+#define do1 1046
+#define re1 1175
+#define mi1 1318
+#define fa1 1480
+#define so1 1568
+#define la1 1760
+//半拍200ms
+#define half 200
+
 using namespace std;
 
 const int BEFORE_START = 0;
@@ -34,6 +58,7 @@ int windowsWidth = 480;//实际画出来的高度 480像素
 //校正系数->画bmp整体有横向和纵向的缩小比值
 double correctX = (double)windowsLenth / windowsLenth1;
 double correctY = (double)windowsWidth / windowsWidth1;
+
 
 
 
@@ -76,6 +101,7 @@ SMALL_RECT SizeOfWindow(HANDLE hConsoleOutput)
 }
 void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT idEvent, DWORD dwTime);//回调函数
 
+DWORD WINAPI Thread1(LPVOID);
 int main()
 {         
     //加载图片资源，建议另加一个resource.cpp文件专门加载各种图片资源
@@ -101,6 +127,7 @@ int main()
     HBITMAP coin12080= (HBITMAP)LoadImage(NULL, "coin12080.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
     HBITMAP life4580 = (HBITMAP)LoadImage(NULL, "life4580.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
     HBITMAP plusLife100100 = (HBITMAP)LoadImage(NULL, "plusLife100100.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
+
 
     //定义窗口缓冲区信息结构体  
     CONSOLE_SCREEN_BUFFER_INFO csbi;
@@ -133,13 +160,17 @@ int main()
     //system("mode con cols=100 lines=30");
 
     //改为固定窗口大小->不改了
-    RECT rc;
+    //RECT rc;
     //获得cmd窗口对应矩形
-    GetWindowRect(hwnd, &rc); 
+    //GetWindowRect(hwnd, &rc); 
     //改变cmd窗口风格
-    SetWindowLongPtr(hwnd,GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) & ~WS_THICKFRAME & ~WS_MAXIMIZEBOX & ~WS_MINIMIZEBOX);
+    //SetWindowLongPtr(hwnd,GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) & ~WS_THICKFRAME & ~WS_MAXIMIZEBOX & ~WS_MINIMIZEBOX);
     //因为风格涉及到边框改变，必须调用SetWindowPos，否则无效果
     SetWindowPos(hwnd,NULL, rc.left,rc.top,rc.right - rc.left, rc.bottom - rc.top, NULL);
+
+    //锁定窗口全屏
+    //SetWindowLong(hwnd, GWL_STYLE, (l_WinStyle | WS_POPUP | WS_MAXIMIZE) & ~WS_THICKFRAME);
+    //SetWindowPos(hwnd,NULL, rc.left,rc.top,rc.right - rc.left, rc.bottom - rc.top, NULL);
    
     ////固定窗口大小
     //MoveWindow(hwnd, rc.left, rc.top, 800, 515, TRUE); // 815 width, 515 height
@@ -151,7 +182,7 @@ int main()
     SetConsoleScreenBufferSize(hOut, size);//point
     GetConsoleScreenBufferInfo(hOut, &csbi);//用于检索指定的控制台屏幕缓冲区的信息
     //重置窗口位置和大小
-    SetConsoleWindowInfo(hOut, true, &rect);
+    //SetConsoleWindowInfo(hOut, true, &rect);
     
 
     // 隐藏控制台光标
@@ -183,6 +214,16 @@ int main()
     LPDWORD InputNum = &InNum;
 
     POINT p;//鼠标坐标
+
+
+    HANDLE hThread;
+    DWORD threadID;
+    hThread = CreateThread(NULL, 0, Thread1, 0, 0, &threadID);//创建进程
+
+
+
+
+
 
     //初始化inputRecord
     ReadConsoleInput(hIn, &inputRecord, 1, &res);       //读取输入事件
@@ -317,7 +358,7 @@ int main()
 
             //初始化障碍物位置、属性
             unrecyclable.init();
-
+            
             flag = PLAYING_GAME;
             break;
         }
@@ -469,9 +510,64 @@ void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT idEvent, DWORD dwTime)
 
     if (flag == BEFORE_START)
     {
+
     }
     else
     {
 
+    }
+}
+DWORD WINAPI Thread1(LPVOID)//进程函数，用来播放背景音乐
+{
+    int tiger2[][2] =
+    {
+        {do,2},{re,2},{mi,2},{do,2},//两只老虎
+        {re,2},{so,2},{so,2},{0,2},//爱跳舞
+        {mi,2},{la,1},{la,1},{la,2},{la,2},//小兔子乖乖
+        {so,1},{mi,1},{so,2},{mi,2},{0,2},//拔萝卜
+        {do,3},{do,1},{do,2},{la,1},{la,1},//我和小鸭子
+        {so,2},{mi,2},{so,2},{0,2},//学走路
+        {re,1},{re,2},{mi,1},{mi,1},{re,1},{do,1},{mi,1},//童年是最美的礼
+        {re,4},{qso,1},{qla,1},{qsi,1},{re,1},//物
+        {do,2},{re,2},{mi,2},{do,2},//小螺号呀
+        {re,2},{so,1},{so,1},{so,2},{0,2},//滴滴地吹
+        {mi,2},{la,2},{la,2},{do1,2},//我学海鸥
+        {si,2},{la,2},{so,2},{0,2},//展翅飞
+        {do,3},{do,1},{do,2},{la,2},//不怕风雨
+        {so,2},{so,2},{mi,2},{0,2},//不怕累
+        {re,1},{re,2},{mi,1},{mi,1},{re,1},{do,1},{re,1},//快快把本领都学
+        {do,4},{do,1},{re,1},{mi,1},{so,1},//会,宝
+        {do1,3},{do1,1},{do1,1},{so,1},{mi,1},{do1,1},//贝，星星为你指
+        {si,4},{0,2},{0,1},{mi,1},//路，宝
+        {la,3},{la,1},{la,1},{so,1},{la,1},{si,1},//贝，月亮为你祝
+        {so,4},{0,2},{0,2},//福
+        {mi,2},{so,1},{so,1}, {so,2},{do1,2},//成长是快乐
+        {re1,3},{re1,1},{la,4},//的旅途
+        {so,1},{so,1},{so,1}, {la,1},{si,1}, {la,1},{si,1}, {do1,1},//勇敢迈开你的脚
+        {re1,6},{0,1},{so,1},//步，宝
+        {do1,3},{do1,1},{do1,1},{so,1},{mi,1},{do1,1},//贝，妈妈怀里安
+        {si,4},{0,2},{0,1},{mi,1},//睡，宝
+        {la,3},{la,1},{la,1},{so,1},{la,1},{si,1},//爸爸是你椅
+        {so,4},{0,2},{0,2},//背
+        {mi,2},{so,2},{so,2},{do1,1},{do1,1},//你是我们的
+        {re1,1},{re1,1},{re1,2},{la,4},//心肝宝贝
+        {so,1},{so,1},{so,1},{la,1},{si,1},{do1,1},{do1,1},{re1,1},//爸爸妈妈的爱永相
+        {do1,8},//随
+        {0,8}
+    };
+    while (1)
+    {
+        int i = 0;
+        for (; i < sizeof(tiger2) / sizeof(int) / 2; i++)
+        {
+            if (tiger2[i][0] == 0)
+            {
+                Sleep(tiger2[i][1] * half);
+            }
+            else
+            {
+                Beep(tiger2[i][0], tiger2[i][1] * half);
+            }
+        }
     }
 }

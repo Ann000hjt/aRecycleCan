@@ -55,9 +55,14 @@ public:
     void cutLife();
     void plusLife();
     int getLife();
+
+    int getLength();
+    int getWidth();
     void init();
     char direction; //W表示向上 S表示向下 A表示向左 D表示向右
 private:
+    int canLength = 150;
+    int canWidth = 250;
     int life = 3;//易拉罐的生命
     int score = 0;//吃到拉环就+1，可以用于商城购物
     int level;
@@ -92,6 +97,8 @@ public:
     void changeState();
     void Crush();
     void move();
+    int getLength();
+    int getWidth();
     void init();
 
 private:
