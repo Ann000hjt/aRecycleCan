@@ -1,1 +1,1 @@
-E:\GitFile\aRecycleCan-master\x64\Debug\Can518.exe
+D:\C++\Can518\Debug\Can518.exe
