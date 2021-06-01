@@ -30,8 +30,9 @@
 #define fa1 1480
 #define so1 1568
 #define la1 1760
+#define ting 60
 //半拍200ms
-#define half 200
+#define half 236
 
 using namespace std;
 
@@ -81,6 +82,7 @@ Title shop_t((windowsLenth1 - 240) / 2, windowsWidth1 / 15, 160, 90);
 Title coin_t(2*windowsLenth1/ 3,  windowsWidth1 / 15, 60, 40);
 //创建障碍物
 Barrier unrecyclable;
+Barrier unrecyclable2;
 //创建拉环道具
 Coin coin1(1);
 //创建加生命值道具
@@ -123,6 +125,7 @@ int main()
     HBITMAP shop16090 = (HBITMAP)LoadImage(NULL, "shop16090.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
     HBITMAP coin6040 = (HBITMAP)LoadImage(NULL, "coin6040.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
     //其他
+    HBITMAP unrecyclable140140 = (HBITMAP)LoadImage(NULL, "unrecyclable140140.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
     HBITMAP unrecyclable130130 = (HBITMAP)LoadImage(NULL, "unrecyclable130130.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
     HBITMAP coin12080= (HBITMAP)LoadImage(NULL, "coin12080.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
     HBITMAP life4580 = (HBITMAP)LoadImage(NULL, "life4580.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
@@ -166,7 +169,7 @@ int main()
     //改变cmd窗口风格
     //SetWindowLongPtr(hwnd,GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) & ~WS_THICKFRAME & ~WS_MAXIMIZEBOX & ~WS_MINIMIZEBOX);
     //因为风格涉及到边框改变，必须调用SetWindowPos，否则无效果
-    SetWindowPos(hwnd,NULL, rc.left,rc.top,rc.right - rc.left, rc.bottom - rc.top, NULL);
+    //SetWindowPos(hwnd,NULL, rc.left,rc.top,rc.right - rc.left, rc.bottom - rc.top, NULL);
 
     //锁定窗口全屏
     //SetWindowLong(hwnd, GWL_STYLE, (l_WinStyle | WS_POPUP | WS_MAXIMIZE) & ~WS_THICKFRAME);
@@ -216,13 +219,10 @@ int main()
     POINT p;//鼠标坐标
 
 
+    //另一个线程播放音乐
     HANDLE hThread;
     DWORD threadID;
     hThread = CreateThread(NULL, 0, Thread1, 0, 0, &threadID);//创建进程
-
-
-
-
 
 
     //初始化inputRecord
@@ -333,6 +333,15 @@ int main()
         }
         DrawBmp(hDC, dcMEM, background, backgroundPlayingGame, 1280, 720, isFirst);
         isFirst = false;
+
+        //读档
+        read_save(hh);
+
+        //实时显示coin
+        pCoin = { 110,29 };
+        SetConsoleCursorPosition(hOut, pCoin);
+        cout << "coin:" << hh.getScore();
+
         switch (flag)
         {
         case BEFORE_START:
@@ -349,15 +358,16 @@ int main()
         {
             next_game_tick = (DWORD)GetTickCount64();//返回从程序开始运行到现在的时间/ms
             //初始化易拉罐位置、属性
-            read_save(hh);
             hh.init();
 
-            //初始化拉环位置、属性
+            //初始化道具位置、属性
             coin1.init();
             coin2.init();
 
             //初始化障碍物位置、属性
             unrecyclable.init();
+            unrecyclable2.init();
+            unrecyclable.setX(windowsLenth1 / 3);
             
             flag = PLAYING_GAME;
             break;
@@ -378,6 +388,7 @@ int main()
                 //hh的操作属于upDate_Data 每秒不多不少地被调用50次
                 upDate_data(hh);
                 upDate_data(unrecyclable);
+                upDate_data(unrecyclable2);
                 upDate_data(coin1);
                 upDate_data(coin2);
 
@@ -394,6 +405,11 @@ int main()
                 if (isBarrierCrush(hh, unrecyclable) == true)
                 {
                     unrecyclable.Crush();
+                    hh.cutLife();
+                }
+                if (isBarrierCrush(hh, unrecyclable2) == true)
+                {
+                    unrecyclable2.Crush();
                     hh.cutLife();
                 }
 
@@ -441,7 +457,8 @@ int main()
                 DrawBmp(hDC, dcMEM, can150250, hh, 150, 250, isFirst, interpolation);
             
             //此处除了罐子外，其他的（障碍物，拉环）也都需要差值预测
-            DrawBmp(hDC, dcMEM, unrecyclable130130, unrecyclable, 200, 200, isFirst);
+            DrawBmp(hDC, dcMEM, unrecyclable130130, unrecyclable, 130, 130, isFirst);
+            DrawBmp(hDC, dcMEM, unrecyclable140140, unrecyclable2, 140, 140, isFirst);
             if (coin1.getEatenState()==false)
                 DrawBmp(hDC, dcMEM, coin12080, coin1, 120, 80, isFirst);
             if (coin2.getEatenState() == false)
@@ -451,6 +468,8 @@ int main()
             
             if (hh.getLife() <= 0)
                 flag = GAME_OVER;
+
+            save_data(hh);
             break;
         }
         case ACHIEVEMENT_SHOW:
@@ -462,12 +481,6 @@ int main()
             DrawBmp(hDC, dcMEM, shop16090, shop_t, 160, 90, isFirst);
             DrawBmp(hDC, dcMEM, back10060, back, 100, 60, isFirst);
             DrawBmp(hDC, dcMEM, coin6040, coin_t, 60, 40, isFirst);
-
-            pCoin = { 110,29 };
-            SetConsoleCursorPosition(hOut, pCoin);
-
-            cout << "coin:"<<hh.getScore();
-
             break;
         case GAME_OVER:
             //GAME_OVER是游戏结束界面
@@ -478,8 +491,6 @@ int main()
             //背景上的主角和返回键
             DrawBmp(hDC, dcMEM, overcan180320, hh, 180, 320, isFirst);
             DrawBmp(hDC, dcMEM, back10060, back, 100, 60, isFirst);
-
-            save_data(hh);
             break;
         }
         
@@ -519,6 +530,16 @@ void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT idEvent, DWORD dwTime)
 }
 DWORD WINAPI Thread1(LPVOID)//进程函数，用来播放背景音乐
 {
+    /*DWORD next_game_tick = (DWORD)0;
+    int loops;
+    loops = 0;
+    while (GetTickCount64() > next_game_tick && loops < MAX_FRAMESKIP)
+    {
+        
+
+        next_game_tick += SKIP_TICKS;
+        loops++;
+    }*/
     int tiger2[][2] =
     {
         {do,2},{re,2},{mi,2},{do,2},//两只老虎
@@ -568,6 +589,7 @@ DWORD WINAPI Thread1(LPVOID)//进程函数，用来播放背景音乐
             {
                 Beep(tiger2[i][0], tiger2[i][1] * half);
             }
+            //Sleep(ting);//如果不停一下，唱歌就会不正常，可能因为跟不上速度
         }
     }
 }

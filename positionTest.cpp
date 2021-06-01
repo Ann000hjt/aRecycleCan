@@ -53,7 +53,7 @@ bool isCoinEaten(Can& can, Coin& coin)
 	else
 		return false;
 }
-//圆形碰撞检测(搬代码)，还要改 先用上面代替了
+
 //圆形碰撞检测
 bool isBarrierCrush(Can& can, Barrier& barrier)
 {

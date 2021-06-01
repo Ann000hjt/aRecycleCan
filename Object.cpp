@@ -65,7 +65,7 @@ int Can::getScore()
 }
 void Can::cutLife()
 {
-   // if(life==1)直接触发游戏结束嗷
+   // if(life==1)触发游戏结束
     life--;
 }
 void Can::plusLife()
@@ -80,7 +80,6 @@ int Can::getLife()
 void Can::init()
 {
     life = 3;
-    //score = 0;
     level = LEVEL_0;
     v_y = 0;
     direction = 'D';
@@ -116,8 +115,16 @@ void Barrier::init()
 {
     x = windowsLenth1;
     y = 2 * windowsWidth1 / 3;
-    this->v_x = -random(10,15);
+    this->v_x = -random(15,20);
     isCrush = false;
+}
+int Barrier::getLength()
+{
+    return barrierLength;
+}
+int Barrier::getWidth()
+{
+    return barrierWidth;
 }
 
 
@@ -140,9 +147,13 @@ int Button::getWidth()
 
 Coin::Coin(int Cointype)
 {
-    this->x = windowsLenth1;
-    this->y = random(windowsWidth1 / 5, windowsWidth1);
     this->type = Cointype;
+    this->x = windowsLenth1;
+    //减少两个道具重合的纪律
+    if(type==1)
+        this->y = random(windowsWidth1 / 5, 2 * windowsWidth1 / 5);
+    else
+        this->y = random(windowsWidth1 / 7, 2 * windowsWidth1 / 3);
     isEaten = false;
 }
 bool Coin::getEatenState()
@@ -170,10 +181,20 @@ void Coin::init()
 {
     //初始化拉环 随机每次出现的位置
     srand((unsigned)time(NULL));//设置随机数种子
+    
     x = windowsLenth1;
-    y = random(windowsWidth1 / 7, windowsWidth1/3);
-    v_y = 3;
-    v_x = -5;
+    if (type == 1)
+    {
+        v_x = -8;
+        this->y = random(windowsWidth1 / 5, 2 * windowsWidth1 / 5);
+    }
+    else
+    {
+        v_x = -5;
+        this->y = random(windowsWidth1 / 7, 2*windowsWidth1 / 3);
+    }
+   
+    //y = random(windowsWidth1 / 7, windowsWidth1/3);
     isEaten = false;
 }
 int Coin::getType() 
